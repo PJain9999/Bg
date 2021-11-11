@@ -1,0 +1,227 @@
+
+
+```{r}
+#install.packages("tidyverse")
+#install.packages("funModeling")
+#install.packages("Hmisc")
+#install.packages("titanic")
+library(Hmisc)
+library(funModeling)
+library(tidyverse)
+
+library(titanic)
+
+
+
+d3=0.1                                                #discount on 3 item
+
+d4=0.2                                                #discount more than 3
+
+reward=200                                            #reward price
+
+cb3=5                                                 #billing cost upto 3 item
+
+cb4=10                                                #billing cost on more than 3 item
+
+gstper=0.05                                            #GST
+
+
+orderno=as.integer(0) 
+
+
+sburger=as.integer(50)
+sfries=as.integer(40)                                    #sales price
+sdrink=as.integer(30)
+
+cburger=as.integer(20)  
+cfries=as.integer(15)                                    #COST PRICE
+cdrinks=as.integer(5)
+
+totalburger=as.integer(100)
+totalfries=as.integer(50)                              #QUANTITY AVAILABLE
+totaldrink=as.integer(70)
+
+d=as.numeric(0)
+```
+
+
+```{r}
+
+
+
+
+
+
+
+repeat{
+  
+  
+  #ORDER NUMBER
+  orderno=orderno+1
+  
+  totalbefore=as.integer(totalburger+totalfries+totaldrink)     #TOATL ITEM 
+  
+  
+  cat("Welcome to THE BURGER KING !!!")
+  
+  
+  n=as.numeric(readline("Enter 1 for updating burger , fries and cold drinks available or any other number for continuing: "))
+  if(n==1)
+  {
+    totalburger=totalburger + as.numeric(readline("Enter the count to be added in burger: "))
+    totalfries=totalfries + as.numeric(readline("Enter the count to be added in french-fries: "))
+    totaldrink=totaldrink + as.numeric(readline("Enter the count to be added in cold drink: "))
+  }
+  
+  cat("Welcome to ORDERING COUNTER !!!")
+  
+  nb=as.numeric(readline("no. of burger: "))
+  nf=as.numeric(readline("no. of frenchfries: "))          #TAKE INPUT
+  nd=as.numeric(readline("no. of colddrink: "))
+  
+  
+  
+  burger=as.integer(nb)
+  frenchfries=as.integer(nf)
+  colddrink=as.integer(nd)
+  
+  b=as.integer(nb)
+  f=as.integer(nf)
+  d=as.integer(nd)
+  
+  if(nb-b!=0)
+  {
+    cat("enter valid quantity")
+    
+  }
+  if(nf-f!=0)
+  {
+    cat("enter valid quantity")
+  }
+  if(nd-d!=0)
+  {
+    cat("enter valid quantity")
+  }
+  
+  totalburger=totalburger-nb
+  totalfries=totalfries-nf                              #REMAINING ITEMS
+  totaldrink=totaldrink-nd
+  
+  
+  if(totalburger<0)
+  {
+    cat("Burger are not avaliable")
+    break()
+  }
+  if(totalfries<0)                                             #CHECK ITEMS ARE AVALIALBE OR NOT
+  {
+    cat("Frenchfries are not avaliable")
+    break()
+  }
+  if(totaldrink<0)
+  {
+    cat("Cold drinks are not avaliable")
+    break()
+  }
+  
+  totalsales<-as.integer(nb*sburger+nf*sfries+nd*sdrink)     #SALE PRICE
+  
+  salesprice=as.integer(totalsales)
+  
+  totalitem<-as.integer(nb+nf+nd)                            #TOTAL ITEMS
+  
+  totalitems=as.integer(totalitem)
+  
+  totalcost=as.integer(cburger*nb+cfries*nf+cdrinks*nd)
+  if(totalitem<=3)
+  { 
+    totalcost=totalcost+cb3                                 #TOTAL COST
+  } else
+  {
+    totalcost=totalcost+cb4
+  }
+  
+  
+  if(totalitem==3)
+  { d=as.numeric(totalsales*d3)
+  totalsales=as.numeric(totalsales-d)
+  } else
+  {                                                       #APPLY DISCOUNT
+    if(totalitem>3)
+    {
+      d=as.numeric(totalsales*d4)
+      totalsales=as.numeric(totalsales-d)
+    }
+  }
+  
+  
+  profit=as.numeric(totalsales-totalcost)
+  
+  gst=as.numeric(totalsales*gstper)
+  
+  finalprice=as.numeric(totalsales+gst)                      #FINAL PRICE
+  
+  
+  
+  if(orderno %% 10==0)
+  {
+    finalprice=finalprice-reward 
+    
+    if(finalprice<0)                                    #REWARD PRICE
+    {
+      cat("YOUR ORDER IS FREE!!!!!")
+    }
+  }
+  
+  date=date();
+  
+  m <- cbind(burger, frenchfries, colddrink, salesprice, totalitems, finalprice, profit,date)
+  d <- as.data.frame(m)
+  df <- cbind(d)
+  write.table(df, file = "df.csv", append = T, col.names = F, sep = ",", row.names = F)
+  
+  
+  aa=read.csv(file = "df.csv")
+  titanic <- read.csv(file = "df.csv")
+  view(titanic)
+  #head(titanic,3)
+  #tail(titanic,2)
+  #names(titanic)
+  str(titanic)
+  #summary(titanic)
+  #cat(aa)
+  
+  #describe(aa)
+ 
+  basic_eda(aa)
+  cat("FINAL PRICE " ,finalprice)
+  cat(" ")
+   
+  m=readline("enter y for continue and n for exit")
+  if(m=="N"|m=="n")
+  {
+    break()
+  }
+  
+  
+  
+ basic_eda <- function(data)
+ {
+   glimpse(data)
+   df_status(data)
+   freq(data)
+   profiling_num(data)
+   plot_num(data)
+   describe(data)
+ }
+ 
+   
+}
+
+
+
+```
+
+
+
+
